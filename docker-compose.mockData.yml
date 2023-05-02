@@ -1,0 +1,20 @@
+# docker-compose -f docker-compose.mockData.yml run --rm mock_data
+version: "3"
+
+services:
+  mock_data:
+    container_name: event_mock_data
+    image: event_mock_data
+    build:
+      context: ./backend
+      dockerfile: mockData.Dockerfile
+    environment:
+      MONGO_URI: mongodb://${MONGO_INITDB_USER}:${MONGO_INITDB_PWD}@database:27017/${MONGO_INITDB_DATABASE}?authSource=${MONGO_INITDB_DATABASE}
+      MONGO_DBNAME: ${MONGO_INITDB_DATABASE}
+    networks:
+      - aimet-test-network
+
+networks:
+  aimet-test-network:
+    external:
+      name: aimet-test-network
