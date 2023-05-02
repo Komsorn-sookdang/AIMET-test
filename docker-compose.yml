@@ -36,6 +36,21 @@ services:
     networks:
       - aimet-test-network
 
+  gateway:
+    container_name: nginx
+    image: nginx:1.19.6
+    environment:
+      SERVER_NAME: localhost
+      BACKEND_ENDPOINT: backend:8000
+    restart: always
+    volumes:
+      - ./nginx/gateway.conf.template:/etc/nginx/conf.d/gateway.conf.template
+    ports:
+      - 80:80
+    command: /bin/bash -c "envsubst < /etc/nginx/conf.d/gateway.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+    networks:
+      - aimet-test-network
+
 networks:
   aimet-test-network:
     name: aimet-test-network
