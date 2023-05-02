@@ -17,7 +17,9 @@ func SetupRouter() *gin.Engine {
 	})
 
 	mongoClient := databases.GetMongoClient()
-	eventRepo := repositories.NewEventRepository(mongoClient)
+	redisClient := databases.GetRedisClient()
+
+	eventRepo := repositories.NewEventRepository(mongoClient, redisClient)
 	eventUsc := usecases.NewEventUsecase(eventRepo)
 	eventCtl := controllers.NewEventController(eventUsc)
 
