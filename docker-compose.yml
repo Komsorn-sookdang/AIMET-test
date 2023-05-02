@@ -28,11 +28,20 @@ services:
     environment:
       MONGO_URI: mongodb://${MONGO_INITDB_USER}:${MONGO_INITDB_PWD}@database:27017/${MONGO_INITDB_DATABASE}?authSource=${MONGO_INITDB_DATABASE}
       MONGO_DBNAME: ${MONGO_INITDB_DATABASE}
+      REDIS_URI: redis:6379
       # TODO: change to release mode for improve performance (use custom logger)
       GIN_MODE: debug
     # restart: always
     depends_on:
       - database
+    networks:
+      - aimet-test-network
+
+  redis:
+    container_name: redis
+    image: redis:6.0.9
+    ports:
+      - 6379:6379
     networks:
       - aimet-test-network
 

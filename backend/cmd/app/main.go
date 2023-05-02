@@ -15,6 +15,9 @@ func main() {
 	databases.InitMongoClient()
 	defer databases.CloseMongoClient()
 
+	databases.InitRedisClient()
+	defer databases.CloseRedisClient()
+
 	r := router.SetupRouter()
 
 	r.Run(fmt.Sprintf(":%d", viper.GetInt("port")))
