@@ -1,0 +1,16 @@
+# docker-compose -f docker-compose.test.yml run --rm load_test run /scripts/get_event_test.js
+version: "3"
+
+services:
+  load_test:
+    container_name: k6
+    image: loadimpact/k6
+    volumes:
+      - ./k6/scripts:/scripts
+    networks:
+      - aimet-test-network
+
+networks:
+  aimet-test-network:
+    external:
+      name: aimet-test-network
