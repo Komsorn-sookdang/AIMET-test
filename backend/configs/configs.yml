@@ -1,6 +1,5 @@
 port: 8000
 mode: debug
-
-mongo:
-  uri: mongodb://user:pwd@localhost:27018/database
-  dbname: database
+# mongo:
+#   uri: mongodb://user:pwd@localhost:27018/database
+#   dbname: database

@@ -2,7 +2,7 @@ version: "3"
 
 services:
   database:
-    container_name: database
+    container_name: mongo
     build:
       context: ./mongo
       dockerfile: ./Dockerfile
@@ -16,3 +16,26 @@ services:
       - ./volumes/mongo:/data/db
     ports:
       - 27018:27017
+    networks:
+      - aimet-test-network
+
+  backend:
+    container_name: backend
+    image: backend
+    build:
+      context: ./backend
+      dockerfile: ./Dockerfile
+    environment:
+      MONGO_URI: mongodb://${MONGO_INITDB_USER}:${MONGO_INITDB_PWD}@database:27017/${MONGO_INITDB_DATABASE}?authSource=${MONGO_INITDB_DATABASE}
+      MONGO_DBNAME: ${MONGO_INITDB_DATABASE}
+      # TODO: change to release mode for improve performance (use custom logger)
+      GIN_MODE: debug
+    # restart: always
+    depends_on:
+      - database
+    networks:
+      - aimet-test-network
+
+networks:
+  aimet-test-network:
+    name: aimet-test-network
