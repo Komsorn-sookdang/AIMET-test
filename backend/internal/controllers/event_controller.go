@@ -35,5 +35,7 @@ func (c *eventController) GetFilteredEvents(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"events": events})
+	response := models.NewGetEventResponse(events)
+
+	ctx.JSON(http.StatusOK, response)
 }

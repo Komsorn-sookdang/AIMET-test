@@ -82,3 +82,15 @@ func SortEventsByTime(events []*Event) {
 		return events[i].StartTime < events[j].StartTime
 	})
 }
+
+type GetEventResponse struct {
+	Count  int      `json:"count"`
+	Events []*Event `json:"events"`
+}
+
+func NewGetEventResponse(events []*Event) *GetEventResponse {
+	return &GetEventResponse{
+		Count:  len(events),
+		Events: events,
+	}
+}
