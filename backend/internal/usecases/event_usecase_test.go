@@ -365,7 +365,6 @@ func TestValidateGetEventQuery(t *testing.T) {
 	}
 }
 
-
 func TestSortEventsByTime(t *testing.T) {
 	type testCase struct {
 		name string
@@ -512,7 +511,6 @@ func TestSortEventsByTime(t *testing.T) {
 		})
 	}
 }
-		
 
 func TestFormatTimeTo12Hour(t *testing.T) {
 	type testCase struct {
