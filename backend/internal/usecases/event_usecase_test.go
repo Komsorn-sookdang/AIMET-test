@@ -2,12 +2,206 @@ package usecases_test
 
 import (
 	"aimet-test/internal/models"
+	"aimet-test/internal/repositories"
 	"aimet-test/internal/usecases"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
 )
+
+func TestGetFilteredEvents(t *testing.T) {
+
+	type testCase struct {
+		name 				string
+		filter 			*models.GetEventQuery
+		expected 		[]*models.Event
+		expectedErr error
+	}
+
+	testCases := []testCase{
+		{
+			name: "Test Get Events Default",
+			filter: &models.GetEventQuery{
+				Month: 1,
+				Year: 2021,
+				Day: 0,
+				SortBy: "",
+				Keyword: "",
+			},
+			expected: []*models.Event{
+				{
+					Name: "Test Event 1",
+					Date: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
+					StartTime: "3 PM",
+					EndTime: "8 PM",
+				},
+				{
+					Name: "Test Event 2",
+					Date: time.Date(2021, 1, 10, 0, 0, 0, 0, time.UTC),
+					StartTime: "1 AM",
+					EndTime: "11 AM",
+				},
+				{
+					Name: "Test Event 3 very long name",
+					Date: time.Date(2021, 1, 10, 0, 0, 0, 0, time.UTC),
+					StartTime: "9 AM",
+					EndTime: "11 AM",
+				},
+				{
+					Name: "Test Event 4 very long name",
+					Date: time.Date(2021, 1, 20, 0, 0, 0, 0, time.UTC),
+					StartTime: "9 PM",
+					EndTime: "11 PM",
+				},
+			},
+			expectedErr: nil,
+		},
+		{
+			name: "Test Filter By Day",
+			filter: &models.GetEventQuery{
+				Month: 1,
+				Year: 2021,
+				Day: 10,
+				SortBy: "",
+				Keyword: "",
+			},
+			expected: []*models.Event{
+				{
+					Name: "Test Event 2",
+					Date: time.Date(2021, 1, 10, 0, 0, 0, 0, time.UTC),
+					StartTime: "1 AM",
+					EndTime: "11 AM",
+				},
+				{
+					Name: "Test Event 3 very long name",
+					Date: time.Date(2021, 1, 10, 0, 0, 0, 0, time.UTC),
+					StartTime: "9 AM",
+					EndTime: "11 AM",
+				},
+			},
+			expectedErr: nil,
+		},
+		{
+			name: "Test Filter By Keyword",
+			filter: &models.GetEventQuery{
+				Month: 1,
+				Year: 2021,
+				Day: 0,
+				SortBy: "",
+				Keyword: "very long name",
+			},
+			expected: []*models.Event{
+				{
+					Name: "Test Event 3 very long name",
+					Date: time.Date(2021, 1, 10, 0, 0, 0, 0, time.UTC),
+					StartTime: "9 AM",
+					EndTime: "11 AM",
+				},
+				{
+					Name: "Test Event 4 very long name",
+					Date: time.Date(2021, 1, 20, 0, 0, 0, 0, time.UTC),
+					StartTime: "9 PM",
+					EndTime: "11 PM",
+				},
+			},
+			expectedErr: nil,
+		},
+		{
+			name: "Test Filter By Keyword and Day",
+			filter: &models.GetEventQuery{
+				Month: 1,
+				Year: 2021,
+				Day: 10,
+				SortBy: "",
+				Keyword: "very long name",
+			},
+			expected: []*models.Event{
+				{
+					Name: "Test Event 3 very long name",
+					Date: time.Date(2021, 1, 10, 0, 0, 0, 0, time.UTC),
+					StartTime: "9 AM",
+					EndTime: "11 AM",
+				},
+			},
+			expectedErr: nil,
+		},
+		{
+			name: "Test Sort By Time",
+			filter: &models.GetEventQuery{
+				Month: 1,
+				Year: 2021,
+				Day: 0,
+				SortBy: "time",
+				Keyword: "",
+			},
+			expected: []*models.Event{
+				{
+					Name: "Test Event 2",
+					Date: time.Date(2021, 1, 10, 0, 0, 0, 0, time.UTC),
+					StartTime: "1 AM",
+					EndTime: "11 AM",
+				},
+				{
+					Name: "Test Event 3 very long name",
+					Date: time.Date(2021, 1, 10, 0, 0, 0, 0, time.UTC),
+					StartTime: "9 AM",
+					EndTime: "11 AM",
+				},
+				{
+					Name: "Test Event 1",
+					Date: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
+					StartTime: "3 PM",
+					EndTime: "8 PM",
+				},
+				{
+					Name: "Test Event 4 very long name",
+					Date: time.Date(2021, 1, 20, 0, 0, 0, 0, time.UTC),
+					StartTime: "9 PM",
+					EndTime: "11 PM",
+				},
+			},
+			expectedErr: nil,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			eventRepo := repositories.NewEventRepositoryMock()
+			eventRepo.On("FindByMonth", 1, 2021).Return([]*models.Event{
+				{
+					Name: "Test Event 1",
+					Date: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
+					StartTime: "15:00",
+					EndTime: "20:00",
+				},
+				{
+					Name: "Test Event 2",
+					Date: time.Date(2021, 1, 10, 0, 0, 0, 0, time.UTC),
+					StartTime: "01:00",
+					EndTime: "11:00",
+				},
+				{
+					Name: "Test Event 3 very long name",
+					Date: time.Date(2021, 1, 10, 0, 0, 0, 0, time.UTC),
+					StartTime: "09:00",
+					EndTime: "11:00",
+				},
+				{
+					Name: "Test Event 4 very long name",
+					Date: time.Date(2021, 1, 20, 0, 0, 0, 0, time.UTC),
+					StartTime: "21:00",
+					EndTime: "23:00",
+				},
+			}, nil)
+
+			eventUsc := usecases.NewEventUsecase(eventRepo)
+
+			events, _ := eventUsc.GetFilteredEvents(tc.filter)
+			assert.Equal(t, tc.expected, events)
+		})
+	}
+}
 
 func TestValidateGetEventQuery(t *testing.T) {
 	type testCase struct {
