@@ -19,6 +19,10 @@ func NewEventUsecase(eventRepository domains.EventRepository) domains.EventUseca
 }
 
 func (u *eventUsecase) GetFilteredEvents(filter *models.GetEventQuery) ([]*models.Event, error) {
+	if filter.Year == 0 {
+		filter.Year = time.Now().Year()
+	}
+
 	allEvents, err := u.eventRepository.FindByMonth(filter.Month, filter.Year)
 	if err != nil {
 		return nil, err
@@ -44,7 +48,7 @@ func (u *eventUsecase) GetFilteredEvents(filter *models.GetEventQuery) ([]*model
 	return filteredEvents, nil
 }
 
-func (u *eventUsecase) ValidateGetEventQuery(q *models.GetEventQuery) error {
+func ValidateGetEventQuery(q *models.GetEventQuery) error {
 
 	if  q.SortBy != "" && q.SortBy != "date" && q.SortBy != "time" {
 		return ErrInvalidSortBy

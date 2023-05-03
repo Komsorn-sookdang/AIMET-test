@@ -3,6 +3,7 @@ package controllers
 import (
 	"aimet-test/internal/domains"
 	"aimet-test/internal/models"
+	"aimet-test/internal/usecases"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -25,8 +26,8 @@ func (c *eventController) GetFilteredEvents(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	
-	if err := c.eventUsecase.ValidateGetEventQuery(&query); err != nil {
+
+	if err := usecases.ValidateGetEventQuery(&query); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
