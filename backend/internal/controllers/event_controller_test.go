@@ -42,10 +42,11 @@ func TestGetFilteredEvents(t *testing.T) {
 			Month: month,
 		}).Return(expected.Events, nil)
 
-		mockCtl := controllers.NewEventController(eventUsc)
+		eventCtl := controllers.NewEventController(eventUsc)
 		
+		gin.SetMode(gin.TestMode)
 		app := gin.New()
-		app.GET("/events", mockCtl.GetFilteredEvents)
+		app.GET("/events", eventCtl.GetFilteredEvents)
 
 		req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/events?month=%v", month), nil)
 		w := httptest.NewRecorder()
@@ -61,6 +62,7 @@ func TestGetFilteredEvents(t *testing.T) {
 		eventUsc := usecases.NewEventUsecaseMock()
 		mockCtl := controllers.NewEventController(eventUsc)
 		
+		gin.SetMode(gin.TestMode)
 		app := gin.New()
 		app.GET("/events", mockCtl.GetFilteredEvents)
 
