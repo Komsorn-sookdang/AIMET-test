@@ -20,16 +20,18 @@ func NewEventController(eventUsecase domains.EventUsecase) domains.EventControll
 
 func (c *eventController) GetFilteredEvents(ctx *gin.Context) {
 	var query models.GetEventQuery
+
 	if err := ctx.ShouldBindQuery(&query); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	if err := query.Validate(); err != nil {
+	
+	if err := c.eventUsecase.ValidateGetEventQuery(&query); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	events, err := c.eventUsecase.GetFilteredEvents(query)
+	events, err := c.eventUsecase.GetFilteredEvents(&query)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
