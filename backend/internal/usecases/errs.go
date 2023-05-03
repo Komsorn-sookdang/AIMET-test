@@ -7,4 +7,5 @@ var (
 	ErrInvalidYear	 = errors.New("Invalid year")
 	ErrInvalidMonth	 = errors.New("Invalid month")
 	ErrInvalidDate	 = errors.New("Invalid date")
+	ErrRepository	 = errors.New("Repository error")
 )

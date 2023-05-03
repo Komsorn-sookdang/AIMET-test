@@ -4,6 +4,7 @@ import (
 	"aimet-test/internal/models"
 	"aimet-test/internal/repositories"
 	"aimet-test/internal/usecases"
+	"errors"
 	"testing"
 	"time"
 
@@ -201,6 +202,17 @@ func TestGetFilteredEvents(t *testing.T) {
 			assert.Equal(t, tc.expected, events)
 		})
 	}
+
+	// Case Repository Error
+	t.Run("Test Repository Error", func(t *testing.T) {
+		eventRepo := repositories.NewEventRepositoryMock()
+		eventRepo.On("FindByMonth", 0, time.Now().Year()).Return([]*models.Event{}, errors.New("error"))
+
+		eventUsc := usecases.NewEventUsecase(eventRepo)
+
+		_, err := eventUsc.GetFilteredEvents(&models.GetEventQuery{})
+		assert.ErrorIs(t, err, usecases.ErrRepository)
+	})
 }
 
 func TestValidateGetEventQuery(t *testing.T) {

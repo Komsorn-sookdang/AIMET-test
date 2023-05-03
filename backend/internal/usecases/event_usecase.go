@@ -25,7 +25,7 @@ func (u *eventUsecase) GetFilteredEvents(filter *models.GetEventQuery) ([]*model
 
 	allEvents, err := u.eventRepository.FindByMonth(filter.Month, filter.Year)
 	if err != nil {
-		return nil, err
+		return nil, ErrRepository
 	}
 
 	if filter.SortBy == "time" {
