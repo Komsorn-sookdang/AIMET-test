@@ -35,7 +35,7 @@ The easiest way to run this project, we will use `docker` and `docker-compose` c
 ### Run The Whole System
 
 1. **Environment file preparation**
-   
+
    First of all, you will need to prepare the `.env` file to declare the system environment variable that use to create a database and service connection. The example of `.env` is in the file [.env.template](.env.template). You will need to create the `.env` file and put it in the same directory as `.env.template`.
 
    - `MONGO_ROOT_USER` is a MongoDB root user name.
@@ -49,7 +49,7 @@ The easiest way to run this project, we will use `docker` and `docker-compose` c
    - `MONGO_INITDB_PWD` is a password of init user.
 
 2. **Run the system**
-   
+
    In this step we will run the whole system with `docker-compose` command. If everything success the container name `nginx`, `redis`, `mongo`and `backend` will be running in you computer. Use the following command to build and run the system.
 
    ```bash
@@ -69,7 +69,7 @@ The easiest way to run this project, we will use `docker` and `docker-compose` c
 In this step, we will generate mock event data and insert it into our MongoDB. Please ensure that you [run the whole system](#run-the-whole-system) completely.
 
 1. **Generate and insert event data**
-   
+
    Run the following command to generate a random event and insert it into our MongoDB.
 
    ```bash
@@ -83,16 +83,16 @@ In this step, we will generate mock event data and insert it into our MongoDB. P
 ### GET Events
 
 - **Request:**
-  
+
   **GET** **[http://localhost/api/v1/events?month={{month}}&year={{year}}&day={{day}}&keyword={{keyword}}&sort_by={{sort_by}}](null)**
-  
-  | Parameter | Required | Type | Description |
-  | --------- | -------- | ---- | ----------- |
-  | `month` | require | string | The numeric value of the month (1-12) for which to retrieve events data. |
-  | `year` | optional | string | The numeric value of the year for which to retrieve events data. If not provided, defaults to the current year. |
-  | `day` | optional | string | The numeric value of the day for which to retrieve events data. If not provided, returns all events data for the month. |
-  | `keyword` | optional | string | A string containing a keyword to search for in the events data name. |
-  | `sort_by` | optional | string | Specifies the field to sort by. Valid values are `date` (default) and `time`. |
+
+  | Parameter | Required | Type   | Description                                                                                                             |
+  | --------- | -------- | ------ | ----------------------------------------------------------------------------------------------------------------------- |
+  | `month`   | require  | string | The numeric value of the month (1-12) for which to retrieve events data.                                                |
+  | `year`    | optional | string | The numeric value of the year for which to retrieve events data. If not provided, defaults to the current year.         |
+  | `day`     | optional | string | The numeric value of the day for which to retrieve events data. If not provided, returns all events data for the month. |
+  | `keyword` | optional | string | A string containing a keyword to search for in the events data name.                                                    |
+  | `sort_by` | optional | string | Specifies the field to sort by. Valid values are `date` (default) and `time`.                                           |
 
 - **Response:**
 
@@ -132,6 +132,16 @@ In this step, we will generate mock event data and insert it into our MongoDB. P
 
 ## System Architecture
 
+![System Architecture](./assets/architecture.png)
+
+- `API Gateway`: (Nginx) This component acts as the entry point for external clients to access the API services. It can handle routing and load balancing (in the future scaling).
+
+- `Backend`: (Golang) This service handles the searching of events data, and exposes an API for searching events data by keyword, day, month or year.
+
+- `Cache Memory`: (Redis) It is a caching for improve performance by caching frequently accessed data (in this project we assume that user will frequency get the events data in the same month and year. So, we will store all the event data in the month into Redis when user send a request. So that, when user try to get event data the same month again (maybe filter it with keyword, day or change type of sort_by), we don't need to query it from database).
+
+- `Database`: (MongoDB) This is where the events data is stored. We can MongoDB as the database, as it provides flexible document-based storage that is well-suited for handling JSON data.
+
 ## Database Design Schema
 
 ### Event Collection Schema
@@ -146,6 +156,8 @@ In this step, we will generate mock event data and insert it into our MongoDB. P
   | `date` | Date | The date of the event. |
   | `start_time` | String | The start time of the event as a string in the format hh:mm. (ex. 09:30, 12:00, or 23:50) |
   | `end_time` | String | The end time of the event as a string in the format hh:mm. |
+
+  Indexing `date` and `start_time`
 
 ## Backend Architecture / Folder Structure
 
