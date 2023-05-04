@@ -35,6 +35,7 @@ The easiest way to run this project, we will use `docker` and `docker-compose` c
 ### Run The Whole System
 
 1. **Environment file preparation**
+   
    First of all, you will need to prepare the `.env` file to declare the system environment variable that use to create a database and service connection. The example of `.env` is in the file [.env.template](.env.template). You will need to create the `.env` file and put it in the same directory as `.env.template`.
 
    - `MONGO_ROOT_USER` is a MongoDB root user name.
@@ -48,6 +49,7 @@ The easiest way to run this project, we will use `docker` and `docker-compose` c
    - `MONGO_INITDB_PWD` is a password of init user.
 
 2. **Run the system**
+   
    In this step we will run the whole system with `docker-compose` command. If everything success the container name `nginx`, `redis`, `mongo`and `backend` will be running in you computer. Use the following command to build and run the system.
 
    ```bash
@@ -67,6 +69,7 @@ The easiest way to run this project, we will use `docker` and `docker-compose` c
 In this step, we will generate mock event data and insert it into our MongoDB. Please ensure that you [run the whole system](#run-the-whole-system) completely.
 
 1. **Generate and insert event data**
+   
    Run the following command to generate a random event and insert it into our MongoDB.
 
    ```bash
@@ -80,7 +83,9 @@ In this step, we will generate mock event data and insert it into our MongoDB. P
 ### GET Events
 
 - **Request:**
+  
   **GET** **[http://localhost/api/v1/events?month={{month}}&year={{year}}&day={{day}}&keyword={{keyword}}&sort_by={{sort_by}}](null)**
+  
   | Parameter | Required | Type | Description |
   | --------- | -------- | ---- | ----------- |
   | `month` | require | string | The numeric value of the month (1-12) for which to retrieve events data. |
