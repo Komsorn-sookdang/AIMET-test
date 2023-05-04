@@ -30,7 +30,7 @@ services:
       MONGO_DBNAME: ${MONGO_INITDB_DATABASE}
       REDIS_URI: redis:6379
       GIN_MODE: release
-    # restart: always
+    restart: always
     depends_on:
       - database
       - redis
