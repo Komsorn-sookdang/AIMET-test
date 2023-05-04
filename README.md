@@ -196,9 +196,9 @@ In this project, we referent the template layout from [https://github.com/golang
 
   - `cmd`: This folder contains the main.go file, which sets up the application and starts the server.
 
-  - `configs`: This folder contains configuration files for the application, such as database configuration.
+  - `configs`: This folder contains configuration files for the application.
 
-  - `internal`: This folder contains the domain logic and the infrastructure code.
+  - `internal`: This folder contains the domain logic.
 
     - `databases`: This folder contains the code that handle databases connection.
 
@@ -244,7 +244,7 @@ To see more test detail, use the tag `-v`.
 go test ./... -v
 ```
 
-Or to test the specific package, this is the example.
+To test the specific package.
 
 ```bash
 go test aimet-test/internal/usecases -v
