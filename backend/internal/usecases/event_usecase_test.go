@@ -359,7 +359,10 @@ func TestValidateGetEventQuery(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			err := usecases.ValidateGetEventQuery(tc.query)
+			eventRepo := repositories.NewEventRepositoryMock()
+			eventUsc := usecases.NewEventUsecase(eventRepo)
+
+			err := eventUsc.ValidateGetEventQuery(tc.query)
 			assert.Equal(t, tc.expectedErr, err)
 		})
 	}

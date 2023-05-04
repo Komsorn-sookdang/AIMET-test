@@ -18,3 +18,8 @@ func (u *eventUsecaseMock) GetFilteredEvents(filter *models.GetEventQuery) ([]*m
 	args := u.Called(filter)
 	return args.Get(0).([]*models.Event), args.Error(1)
 }
+
+func (u *eventUsecaseMock) ValidateGetEventQuery(q *models.GetEventQuery) error {
+	args := u.Called(q)
+	return args.Error(0)
+}

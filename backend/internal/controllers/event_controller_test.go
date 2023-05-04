@@ -41,6 +41,9 @@ func TestGetFilteredEvents(t *testing.T) {
 		eventUsc.On("GetFilteredEvents", &models.GetEventQuery{
 			Month: month,
 		}).Return(expected.Events, nil)
+		eventUsc.On("ValidateGetEventQuery", &models.GetEventQuery{
+			Month: month,
+		}).Return(nil)
 
 		eventCtl := controllers.NewEventController(eventUsc)
 		
@@ -75,4 +78,54 @@ func TestGetFilteredEvents(t *testing.T) {
 			assert.Equal(t, expectedJSON, w.Body.Bytes())
 		}
 	})
+
+	t.Run("should return 400 Bad Request when month is not valid", func(t *testing.T) {
+
+		month := 13
+		expectedStatus := http.StatusBadRequest
+
+		eventUsc := usecases.NewEventUsecaseMock()
+		eventUsc.On("ValidateGetEventQuery", &models.GetEventQuery{
+			Month: month,
+		}).Return(fmt.Errorf("month is not valid"))
+
+		eventCtl := controllers.NewEventController(eventUsc)
+
+		gin.SetMode(gin.TestMode)
+		app := gin.New()
+		app.GET("/events", eventCtl.GetFilteredEvents)
+
+		req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/events?month=%v", month), nil)
+		w := httptest.NewRecorder()
+		app.ServeHTTP(w, req)
+
+		assert.Equal(t, expectedStatus, w.Code)
+	})
+
+	t.Run("should return 500 Internal Server Error when usecase returns error", func(t *testing.T) {
+		
+		month := 1
+		expectedStatus := http.StatusInternalServerError
+
+		eventUsc := usecases.NewEventUsecaseMock()
+		eventUsc.On("ValidateGetEventQuery", &models.GetEventQuery{
+			Month: month,
+		}).Return(nil)
+		eventUsc.On("GetFilteredEvents", &models.GetEventQuery{
+			Month: month,
+		}).Return([]*models.Event{}, fmt.Errorf("error"))
+
+		eventCtl := controllers.NewEventController(eventUsc)
+
+		gin.SetMode(gin.TestMode)
+		app := gin.New()
+		app.GET("/events", eventCtl.GetFilteredEvents)
+
+		req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/events?month=%v", month), nil)
+		w := httptest.NewRecorder()
+		app.ServeHTTP(w, req)
+
+		assert.Equal(t, expectedStatus, w.Code)
+	})
 }
+

@@ -48,7 +48,7 @@ func (u *eventUsecase) GetFilteredEvents(filter *models.GetEventQuery) ([]*model
 	return filteredEvents, nil
 }
 
-func ValidateGetEventQuery(q *models.GetEventQuery) error {
+func (u *eventUsecase) ValidateGetEventQuery(q *models.GetEventQuery) error {
 
 	if  q.SortBy != "" && q.SortBy != "date" && q.SortBy != "time" {
 		return ErrInvalidSortBy
